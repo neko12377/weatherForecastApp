@@ -52,7 +52,50 @@ const Cog = styled.div`
     }
 `;
 
+const Description = styled.div`
+  width: 100%;
+  height: 12%;
+  background-color: rgb(244, 213, 212);
+  justify-content: flex-start;
+  padding-left: 5%;
+  font-size: 1.2rem;
+  border-radius: 4px;
+  color:rgb(140, 121, 100);
+`;
 
+const CurrentWeather = styled.div`
+  width: 100%;
+  height: 40%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: rgb(215, 225, 241);
+`;
+
+const AirFlow = styled.div`
+  width: 100%;
+  height: 12%;
+  border-radius: 4px;
+  background-color: rgb(248, 234, 214);
+  justify-content: flex-start;
+  color:rgb(136, 118, 118);
+  padding-left: 5%;
+`;
+
+const Rain = styled.div`
+  width: 100%;
+  height: 12%;
+  padding-left: 5%;
+  background-color: rgb(244, 213, 212);
+  border-radius: 4px;
+`;
+
+const ObservedTime = styled.div`
+width: 100%;
+  height: 1.2rem;
+  justify-content: flex-end;
+  padding-right: 2.5rem;
+  color: rgb(142, 122, 100);
+`;
 export default function WeatherApp() {
   return (
     <WeatherCard>
@@ -70,6 +113,19 @@ export default function WeatherApp() {
           舒適
         </Comfort>
       </Header>
+      <Description>
+
+      </Description>
+      <CurrentWeather>
+
+      </CurrentWeather>
+      <AirFlow>
+
+      </AirFlow>
+      <Rain>
+
+      </Rain>
+      <ObservedTime></ObservedTime>
     </WeatherCard>
   );
 }
