@@ -1,131 +1,92 @@
-import React from 'react';
-import styled from '@emotion/styled';
-import * as weatherElement from './imageResources.jsx';
+import React, { useState, useEffect } from 'react';
+import { ThemeProvider } from 'emotion-theming';
+import useWeatherAPI from './useWeatherAPI';
+import { findRegion } from './Region';
+import WeatherCardWrapper from './WeatherCard.jsx';
+import WeatherSetting from './WeatherSetting.jsx';
 
-const WeatherCard = styled.section`
-  background-color: rgb(212, 249, 227);
-  width: 350px;
-  height: 450px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0.8rem 0.8rem 0rem 0.8rem;
-  border-radius: 16px;
-`;
+const theme = {
+  light: {
+    background: '#d4f9e3',
+    header: '#f8ead6',
+    cogHover: 'hotpink',
+    changeThemeColor: '#aaaafa',
+    changeThemeBackground: '#98dfaf',
+    changeThemeButton: '',
+    description: '#f4d5d4',
+    currentWeather: '#d7e1f1',
+    degree: 'rgb(196, 214, 209)',
+    weatherIcon: 'rgb(169, 169, 218)',
+    windSpeed: 'rgb(248, 234, 214)',
+    rain: 'rgb(244, 213, 212)',
+    reload: 'rgb(212, 249, 227)',
+    reloadHover: 'rgb(182, 238, 205)',
+    fontColor: 'rgb(154, 136, 117)',
+    borderBottom: '',
+  },
+  dark: {
+    background: '#223475',
+    header: '#46568f',
+    cogHover: '#ffffff',
+    changeThemeColor: '#666666',
+    changeThemeBackground: '#243671',
+    changeThemeButton: 'translateX(1.5rem)',
+    description: '#46568f',
+    currentWeather: '#46568f',
+    degree: '',
+    weatherIcon: '',
+    windSpeed: '#46568f',
+    rain: '#46568f',
+    reload: '#223475',
+    reloadHover: '#151d4d',
+    fontColor: 'rgb(200, 200, 200)',
+    borderBottom: '#223475 solid 3px',
+  },
+};
 
-const Header = styled.header`
-  width: 100%;
-  height: 20%;
-  background-color: rgb(248, 234, 214);
-  padding: 4%;
-  border-radius: 4px;
-`;
-
-const Location = styled.div`
-  width: 60%;
-  height: 100%;
-  margin-top: 10px;
-  justify-content: flex-start;
-  align-items: flex-end;
-  font-size: 2.5rem;
-  color:rgb(154, 136, 117);
-`;
-
-const Comfort = styled.div`
-  width: 40%;
-  height: 100%;
-  font-size: 1rem;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: space-between;
-  color:rgb(154, 136, 117);
-`;
-
-const Cog = styled.div`
-  cursor: pointer;
-  justify-content: flex-end;
-  align-items: flex-start;
-    &:hover {
-      color: hotpink;
-      transform: rotate(360deg);
-      transition: transform 2s;
-    }
-`;
-
-const Description = styled.div`
-  width: 100%;
-  height: 12%;
-  background-color: rgb(244, 213, 212);
-  justify-content: flex-start;
-  padding-left: 5%;
-  font-size: 1.2rem;
-  border-radius: 4px;
-  color:rgb(140, 121, 100);
-`;
-
-const CurrentWeather = styled.div`
-  width: 100%;
-  height: 40%;
-  padding: 0.5rem;
-  border-radius: 4px;
-  background-color: rgb(215, 225, 241);
-`;
-
-const AirFlow = styled.div`
-  width: 100%;
-  height: 12%;
-  border-radius: 4px;
-  background-color: rgb(248, 234, 214);
-  justify-content: flex-start;
-  color:rgb(136, 118, 118);
-  padding-left: 5%;
-`;
-
-const Rain = styled.div`
-  width: 100%;
-  height: 12%;
-  padding-left: 5%;
-  background-color: rgb(244, 213, 212);
-  border-radius: 4px;
-`;
-
-const ObservedTime = styled.div`
-width: 100%;
-  height: 1.2rem;
-  justify-content: flex-end;
-  padding-right: 2.5rem;
-  color: rgb(142, 122, 100);
-`;
 export default function WeatherApp() {
+  const storageCity = localStorage.getItem('cityName');
+  const [currentCity, setCurrentCity] = useState(storageCity || '臺中市');
+  const currentRegion = findRegion(currentCity) || {};
+  const [weatherElement, fetchData] = useWeatherAPI(currentRegion);
+  const [currentTheme, setCurrentTheme] = useState('light');
+  const [currentPage, setCurrentPage] = useState('WeatherCard');
+
+  const changeTheme = () => (
+    currentTheme === 'light'
+      ? setCurrentTheme('dark')
+      : setCurrentTheme('light')
+  );
+
+  const showSettingPage = () => (
+    currentPage === 'WeatherCard'
+      ? setCurrentPage('WeatherSetting')
+      : setCurrentPage('WeatherCard')
+  );
+
+  useEffect(() => {
+    localStorage.setItem('cityName', currentCity);
+  }, [currentCity]);
+
   return (
-    <WeatherCard>
-      <Header>
-        <Location>
-          台中市
-        </Location>
-        <Comfort>
-          <Cog>
-            <weatherElement.FontAwesomeIcon
-              icon={weatherElement.faCog}
-              // onClick={() => setCurrentPage('WeatherSetting')}
-            />
-          </Cog>
-          舒適
-        </Comfort>
-      </Header>
-      <Description>
-
-      </Description>
-      <CurrentWeather>
-
-      </CurrentWeather>
-      <AirFlow>
-
-      </AirFlow>
-      <Rain>
-
-      </Rain>
-      <ObservedTime></ObservedTime>
-    </WeatherCard>
+    <ThemeProvider theme={theme[currentTheme]}>
+      {currentPage === 'WeatherCard'
+        ? (
+          <WeatherCardWrapper
+            cityName={currentRegion.cityName}
+            weatherElement={weatherElement}
+            fetchData={fetchData}
+            changeTheme={changeTheme}
+            showSettingPage={showSettingPage}
+          />
+        )
+        : (
+          <WeatherSetting
+            cityName={currentRegion.cityName}
+            setCurrentCity={setCurrentCity}
+            showSettingPage={showSettingPage}
+          />
+        )}
+    </ThemeProvider>
   );
 }

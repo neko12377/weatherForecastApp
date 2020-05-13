@@ -20,11 +20,16 @@ module.exports = {
   },
   plugins: [
     'react',
+    'react-hooks',
+    'emotion',
   ],
   rules: {
     "import/extensions": ["error", {
       "jsx": "always",
     }],
     "no-param-reassign": ["error", { "props": false }],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/prop-types": 1,
   },
 };
